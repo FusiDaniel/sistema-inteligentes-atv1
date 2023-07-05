@@ -54,9 +54,9 @@ def infer(vecInpSens: np.int32) -> int:
     # print('infer: ', len(vecInpSens), ' ', vecInpSens)
     print('infer: ', len(vecInpSens))
     outy = -1  # por default, o índice de saída é um índice de erro
-    indx_outs = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 11, 12]
-    indx_outs_no_r = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 11]
-    indx_outs_no_l = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 12]
+    indx_outs = [3, 3, 3, 3, 3, 3, 3, 11, 12]
+    indx_outs_no_left = [3, 3, 3, 3, 3, 3, 3, 12]
+    indx_outs_no_right = [3, 3, 3, 3, 3, 3, 3, 11]
 
     
     if np.sum(vecInpSens) == 0 :  # se num_input_bits for zero
@@ -66,23 +66,24 @@ def infer(vecInpSens: np.int32) -> int:
             exit()
         elif (hasObstacle(vecInpSens, 0)):
             if (hasObstacle(vecInpSens, 1)):
-                outy = np.random.choice([12, 12, 13])
+                outy = np.random.choice([12, 12, 12, 12, 12, 12, 13])
             elif (hasObstacle(vecInpSens, 2)):
-                outy = np.random.choice([11, 11, 13])
+                outy = np.random.choice([11, 11, 11, 11, 11, 11, 13])
+                    
             else:
-                outy = np.random.choice([11, 12, 13])
+                if (last_choice == 11) :
+                    outy = 12
+                if (last_choice == 12) :
+                    outy = 11
+                else:
+                    outy = np.random.choice([11, 11, 12, 12, 11, 11, 12, 12, 13])
         else:
             if (last_choice == 11 or last_choice == 12):
                 outy = 3
-            # else:
-            #     if (vecInpSens[1][3] == 1 or vecInpSens[1][8] == 1 or vecInpSens[1][9] == 1 or vecInpSens[1][11] == 1):
-            #         outy = 11
-            #     elif (vecInpSens[2][3] == 1 or vecInpSens[2][8] == 1 or vecInpSens[2][9] == 1 or vecInpSens[2][11] == 1):
-            #         outy = 12
-            #     elif (vecInpSens[1][6] == 1 or vecInpSens[1][8] == 1 or vecInpSens[1][9] == 1 or vecInpSens[1][11] == 1):
-            #         outy = 11
-            #     elif (vecInpSens[2][3] == 1 or vecInpSens[2][8] == 1 or vecInpSens[2][9] == 1 or vecInpSens[2][11] == 1):
-            #         outy = 12
+            elif (hasObstacle(vecInpSens, 1)):
+                outy = np.random.choice(indx_outs_no_left)
+            elif (hasObstacle(vecInpSens, 2)):
+                outy = np.random.choice(indx_outs_no_right)
             else:
                 outy = np.random.choice(indx_outs)
     last_choice = outy
