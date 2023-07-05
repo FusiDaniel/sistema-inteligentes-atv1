@@ -47,10 +47,11 @@ def hasObstacle(vecInpSens: np.int32, i: int) -> bool:
     return vecInpSens[i][2] == 1 or vecInpSens[i][6] == 1 or vecInpSens[i][12] == 1
 
 last_choice = -1
+reached_goal = False
 # MÉTODO NO QUAL VOCÊ VAI INSERIR INTELIGÊNCIA NO AGENTE !!!
 # este método é usado para 'inferência', ou seja, para tomar decisões
 def infer(vecInpSens: np.int32) -> int:
-    global last_choice, memory
+    global last_choice, memory, reached_goal
     # print('infer: ', len(vecInpSens), ' ', vecInpSens)
     print('infer: ', len(vecInpSens))
     outy = -1  # por default, o índice de saída é um índice de erro
@@ -62,8 +63,20 @@ def infer(vecInpSens: np.int32) -> int:
     if np.sum(vecInpSens) == 0 :  # se num_input_bits for zero
         return outy  # retorna erro (-1)
     else:
-        if (hasFlash(vecInpSens, 0) or hasFlash(vecInpSens, 1) or hasFlash(vecInpSens, 2)):
-            exit()
+        if (last_choice == 0):
+            exit(0)
+        elif (reached_goal):
+            outy = 0
+        elif (hasFlash(vecInpSens, 0)):
+            outy = 3
+        elif (hasFlash(vecInpSens, 1)):
+            outy = 11
+        elif (hasFlash(vecInpSens, 2)):
+            outy = 12
+        elif (vecInpSens[0][4] == 1):
+            outy = 3
+            reached_goal = True
+
         elif (hasObstacle(vecInpSens, 0)):
             if (hasObstacle(vecInpSens, 1)):
                 outy = np.random.choice([12, 12, 12, 12, 12, 12, 13])
