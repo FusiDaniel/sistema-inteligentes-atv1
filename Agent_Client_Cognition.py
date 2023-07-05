@@ -40,6 +40,12 @@ def feedback_analysis(vecInpSens: np.int32, carryRWD: int) -> int:
     return outy
 
 
+def make_decision(probabilities):
+    items_list = list(probabilities.keys())
+    probabilities_list = list(probabilities.values())
+
+    return random.choices(items_list, weights=probabilities_list, k=1)[0]
+
 def hasFlash(vecInpSens: np.int32, i: int) -> bool:
     return vecInpSens[i][3] == 1 or vecInpSens[i][8] == 1 or vecInpSens[i][9] == 1 or vecInpSens[i][11] == 1
 def hasGoal(vecInpSens: np.int32, i: int) -> bool:
@@ -56,10 +62,6 @@ def infer(vecInpSens: np.int32) -> int:
     print('infer: ', len(vecInpSens), ' ', vecInpSens)
 
     outy = -1  # por default, o índice de saída é um índice de erro
-    indx_outs = [3, 3, 3, 3, 3, 3, 3, 11, 12]
-    indx_outs_no_left = [3, 3, 3, 3, 3, 3, 3, 12]
-    indx_outs_no_right = [3, 3, 3, 3, 3, 3, 3, 11]
-
     
     if np.sum(vecInpSens) == 0 :  # se num_input_bits for zero
         return outy  # retorna erro (-1)
@@ -80,26 +82,26 @@ def infer(vecInpSens: np.int32) -> int:
 
         elif (hasObstacle(vecInpSens, 0)):
             if (hasObstacle(vecInpSens, 1)):
-                outy = np.random.choice([12, 12, 12, 12, 12, 12, 13])
+                outy = make_decision({12: 6, 13: 1})
             elif (hasObstacle(vecInpSens, 2)):
-                outy = np.random.choice([11, 11, 11, 11, 11, 11, 13])
+                outy = make_decision({11: 6, 13: 1})
                     
             else:
                 if (last_choice == 11) :
-                    outy = np.random.choice([11, 11, 11, 11, 11, 11, 11, 11, 13])
+                    outy = make_decision({11: 8, 13: 1})
                 if (last_choice == 12) :
-                    outy = np.random.choice([12, 12, 12, 12, 12, 12, 12, 12, 13])
+                    outy = make_decision({11: 8, 13: 1})
                 else:
-                    outy = np.random.choice([11, 11, 11, 11, 12, 12, 12, 12, 13])
+                    outy = make_decision({11: 4, 12: 4, 13: 1})
         else:
             if (last_choice == 11 or last_choice == 12):
                 outy = 3
             elif (hasObstacle(vecInpSens, 1)):
-                outy = np.random.choice(indx_outs_no_left)
+                outy = make_decision({3: 7, 12: 1})
             elif (hasObstacle(vecInpSens, 2)):
-                outy = np.random.choice(indx_outs_no_right)
+                outy = make_decision({3: 7, 11: 1})
             else:
-                outy = np.random.choice(indx_outs)
+                outy = make_decision({3: 7, 11: 1, 12: 1})
     last_choice = outy
     return outy
 
