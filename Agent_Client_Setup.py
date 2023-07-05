@@ -44,7 +44,7 @@ sttSUBfsm = SubStt.RES  # inicia o status da subFSM como SubStt.RES
 #   ["r90", 1], ["r90", 2], ["r90", d], ["l45", 1], ["l45", 2], ["l45", d],
 #   ["l90", 1], ["l90", 2], ["l90", d] ]
 # a var 'd' indica quantidade de casas no grid, a partir da posição atual.
-InfoReqSeq = [["fwd", 1]]
+InfoReqSeq = [["fwd", 1], ["l90", 1], ["r90", 1]]
 nofInfoRequest = len(InfoReqSeq)  # Número de requests que o agente faz p/ o EnviSim antes de decidir
 # a cada request, o programa salvará em um array (com nofInfoRequest elementos x 32 bits)
 CurrentSensBits = np.zeros((nofInfoRequest, 32), dtype=np.int32)  # array c/ nofInfoRequest vals de 32 bits
@@ -232,7 +232,7 @@ strCode = ''  # str que recebe o código para exceções, erros, etc.
 idxInpSensor: int = 0  # índice que indica qual sensor de entrada foi ativado
 decision: int = 0  # índice que é retornado de Cogniton.infer() -> int
 
-delaySec = 0.01  # atraso em segundos apenas para efeitos visuais
+delaySec = 0  # atraso em segundos apenas para efeitos visuais
 
 # ---.(end).---  variables and constants ---.---
 # sys.exit(0)

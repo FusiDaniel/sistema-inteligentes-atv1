@@ -16,43 +16,11 @@ from Agent_Client_Setup import keyMagACT, keyMagMOV, keyMagREQ, keyMagROT, ACTgr
     OUTcnt, OUTdie, OUTgrb, OUTnon, OUTrst, OUTsuc, SRVcnn, SRVinv, SRVnor, SRVpsd, \
     DIRn, DIRne, DIRe, DIRse, DIRs, DIRsw, DIRw, DIRnw
 
-# fazer um preprocessador, que adiciona 10 ao valor
-# das entradas para separar os estados de com e sem ouro
-def move():
-    return []
-def move_foward():
-    return []
-def rotate():
-    return []
-def danger():
-    return []
-def certain_death():
-    return []
-def exit(state):
-    if state == 'with_gold':
-        return move_foward()
-    else:
-        return move()
-
-# sense: [m_foward, rot_left, rot_right, grab, leave]
-moves = [
-    move,
-    move,
-    danger,
-    move_foward,
-    move_foward,
-    exit,
-    rotate,
-    move,
-    move_foward,
-    move_foward,
-    move,
-]
 
 # este método é usado para 'analisar a resposta/feedback' recebido do EnviSim
 def feedback_analysis(vecInpSens: np.int32, carryRWD: int) -> int:
     outy = -1  # por default, o índice de saída é um índice de erro
-    if np.sum(vecInpSens) != 1:  # se o número de bits for '!= 1, 'inferir' retornará um erro (-1)
+    if np.sum(vecInpSens) != len(vecInpSens):  # se o número de bits for '!= 1, 'inferir' retornará um erro (-1)
         return outy
     else:
         inx = np.argmax(vecInpSens)  # isso obtém o índice do bit ativo dentro do vetor de feedback
@@ -72,37 +40,52 @@ def feedback_analysis(vecInpSens: np.int32, carryRWD: int) -> int:
     return outy
 
 
+def hasFlash(vecInpSens: np.int32, i: int) -> bool:
+    return vecInpSens[i][3] == 1 or vecInpSens[i][8] == 1 or vecInpSens[i][9] == 1 or vecInpSens[i][11] == 1
+
+def hasObstacle(vecInpSens: np.int32, i: int) -> bool:
+    return vecInpSens[i][2] == 1 or vecInpSens[i][6] == 1 or vecInpSens[i][12] == 1
+
+last_choice = -1
 # MÉTODO NO QUAL VOCÊ VAI INSERIR INTELIGÊNCIA NO AGENTE !!!
 # este método é usado para 'inferência', ou seja, para tomar decisões
 def infer(vecInpSens: np.int32) -> int:
-    print('infer: ', len(vecInpSens), ' ', vecInpSens)
+    global last_choice, memory
+    # print('infer: ', len(vecInpSens), ' ', vecInpSens)
+    print('infer: ', len(vecInpSens))
     outy = -1  # por default, o índice de saída é um índice de erro
-    indx_outs = [3, 3, 3, 3, 11, 11]
+    indx_outs = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 11, 12]
+    indx_outs_no_r = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 11]
+    indx_outs_no_l = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 12]
+
     
-    if len(vecInpSens) == 1:  # * quando ocorreu apenas 1 requisição de informação
-        if np.sum(vecInpSens) == 0 :  # se num_input_bits for zero
-            return outy  # retorna erro (-1)
-        else:
-            print(vecInpSens[0][0])
-            if (vecInpSens[0][0] == 1 or vecInpSens[0][1] == 1 or vecInpSens[0][7] == 1):
-                outy = np.random.choice(indx_outs)
-
-            else:
-                outy = 11
-
-    elif len(vecInpSens) > 1:  # * quando várias solicitações de informações foram feitas, len(vecInpSens) > 1
-        for k in range(len(vecInpSens)):  # lembrar de varrer todas as entradas
-            if np.sum(vecInpSens[k]) != 1:  # se num bits input é '!=1
-                return outy  # retorna erro (-1)
-            else:
-                print(k[0])
-                if (k[0] == 1 or k[1] == 1 or k[7] == 1):
-                    outy = np.random.choice(indx_outs)
-                else:
-                    outy = 11
-
-    else:  # se não com array vecInpSens vazio, len() = 0
+    if np.sum(vecInpSens) == 0 :  # se num_input_bits for zero
         return outy  # retorna erro (-1)
+    else:
+        if (hasFlash(vecInpSens, 0) or hasFlash(vecInpSens, 1) or hasFlash(vecInpSens, 2)):
+            exit()
+        elif (hasObstacle(vecInpSens, 0)):
+            if (hasObstacle(vecInpSens, 1)):
+                outy = np.random.choice([12, 12, 13])
+            elif (hasObstacle(vecInpSens, 2)):
+                outy = np.random.choice([11, 11, 13])
+            else:
+                outy = np.random.choice([11, 12, 13])
+        else:
+            if (last_choice == 11 or last_choice == 12):
+                outy = 3
+            # else:
+            #     if (vecInpSens[1][3] == 1 or vecInpSens[1][8] == 1 or vecInpSens[1][9] == 1 or vecInpSens[1][11] == 1):
+            #         outy = 11
+            #     elif (vecInpSens[2][3] == 1 or vecInpSens[2][8] == 1 or vecInpSens[2][9] == 1 or vecInpSens[2][11] == 1):
+            #         outy = 12
+            #     elif (vecInpSens[1][6] == 1 or vecInpSens[1][8] == 1 or vecInpSens[1][9] == 1 or vecInpSens[1][11] == 1):
+            #         outy = 11
+            #     elif (vecInpSens[2][3] == 1 or vecInpSens[2][8] == 1 or vecInpSens[2][9] == 1 or vecInpSens[2][11] == 1):
+            #         outy = 12
+            else:
+                outy = np.random.choice(indx_outs)
+    last_choice = outy
     return outy
 
 
