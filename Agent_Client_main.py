@@ -128,7 +128,7 @@ while msg != 'esc':
         while sttSUBfsm == SubStt.CMD:  # depois de adquirir info, tomar uma decisão e enviar COMANDO p/ EnviSim
             cntNofReqs = 0  # faz cntNofReqs = zero p/ prox interação com EnviSim
             decision = infer(sensInpBits)  # fazer uma inferência (escolher uma ação/saída para ser disparada)
-            iterNum = iterNum + 1  # contagem do número de iterações
+            iterNum = iterNum + 3  # contagem do número de iterações
             msg = create_msg(decision, 1)  # converte a decision em uma mensagem p/ EnviSim
             sttMM = Stt.SENDING  # muda o estado da FSM principal p/ SENDING
             sttSUBfsm = SubStt.WAITCM  # muda o sub-estado da subFSM p/ WAITCM (wait for answers after a command)
