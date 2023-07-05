@@ -90,7 +90,7 @@ def infer(vecInpSens: np.int32) -> int:
                 if (last_choice == 12) :
                     outy = 11
                 else:
-                    outy = np.random.choice([11, 11, 12, 12, 11, 11, 12, 12, 13])
+                    outy = np.random.choice([11, 11, 11, 11, 12, 12, 12, 12, 13])
         else:
             if (last_choice == 11 or last_choice == 12):
                 outy = 3
