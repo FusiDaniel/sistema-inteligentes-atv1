@@ -216,7 +216,7 @@ DIRnw: str = LstMsgEStoAG[6][1][7]
 
 # as variáveis usadas no loop de simulação
 iterNum = 0  # conta o número de iterações executadas até agora
-energy = 1000  # quantidade total de energia (número de iterações) disponível para o agente
+energy = 1500  # quantidade total de energia (número de iterações) disponível para o agente
 carryRWD: int = 0  # se o agente carrega a recompensa
 cntNofReqs: int = 0  # contador para o número de solicitações já feitas
 msg = ''  # string que concatena a mensagem que será enviada para EnviSim

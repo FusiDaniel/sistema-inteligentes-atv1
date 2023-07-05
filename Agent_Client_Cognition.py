@@ -53,8 +53,8 @@ reached_goal = False
 # este método é usado para 'inferência', ou seja, para tomar decisões
 def infer(vecInpSens: np.int32) -> int:
     global last_choice, memory, reached_goal
-    # print('infer: ', len(vecInpSens), ' ', vecInpSens)
-    print('infer: ', len(vecInpSens))
+    print('infer: ', len(vecInpSens), ' ', vecInpSens)
+
     outy = -1  # por default, o índice de saída é um índice de erro
     indx_outs = [3, 3, 3, 3, 3, 3, 3, 11, 12]
     indx_outs_no_left = [3, 3, 3, 3, 3, 3, 3, 12]
