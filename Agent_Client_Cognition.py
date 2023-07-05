@@ -86,9 +86,9 @@ def infer(vecInpSens: np.int32) -> int:
                     
             else:
                 if (last_choice == 11) :
-                    outy = 12
+                    outy = np.random.choice([11, 11, 11, 11, 11, 11, 11, 11, 13])
                 if (last_choice == 12) :
-                    outy = 11
+                    outy = np.random.choice([12, 12, 12, 12, 12, 12, 12, 12, 13])
                 else:
                     outy = np.random.choice([11, 11, 11, 11, 12, 12, 12, 12, 13])
         else:
