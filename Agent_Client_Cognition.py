@@ -66,9 +66,7 @@ def infer(vecInpSens: np.int32) -> int:
     if np.sum(vecInpSens) == 0 :  # se num_input_bits for zero
         return outy  # retorna erro (-1)
     else:
-        if (last_choice == 0):
-            exit(0)
-        elif (reached_goal):
+        if (reached_goal):
             outy = 0
         elif (hasFlash(vecInpSens, 0)):
             outy = 3

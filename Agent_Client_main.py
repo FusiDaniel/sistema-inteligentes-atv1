@@ -231,6 +231,7 @@ while msg != 'esc':
         try:
             answES = sock.recv(256)  # recebe uma mensagem com até 256 caracteres
             print('resposta_conn: %s' % answES)
+            if (answES.decode('utf-8') == '{"outcome":["grabbed"]}'): exit(0)
             sttMM = Stt.INTERPRETING  # resposta recebida, altera o estado para INTERPRETING
         except socket.error as e:  # se ocorrer algum erro, imprime o erro do socket
             print('Erro de Socket: ', str(e))
