@@ -42,7 +42,8 @@ def feedback_analysis(vecInpSens: np.int32, carryRWD: int) -> int:
 
 def hasFlash(vecInpSens: np.int32, i: int) -> bool:
     return vecInpSens[i][3] == 1 or vecInpSens[i][8] == 1 or vecInpSens[i][9] == 1 or vecInpSens[i][11] == 1
-
+def hasGoal(vecInpSens: np.int32, i: int) -> bool:
+    return vecInpSens[i][4] == 1
 def hasObstacle(vecInpSens: np.int32, i: int) -> bool:
     return vecInpSens[i][2] == 1 or vecInpSens[i][6] == 1 or vecInpSens[i][12] == 1
 
@@ -69,11 +70,11 @@ def infer(vecInpSens: np.int32) -> int:
             outy = 0
         elif (hasFlash(vecInpSens, 0)):
             outy = 3
-        elif (hasFlash(vecInpSens, 1)):
+        elif (hasFlash(vecInpSens, 1) or hasGoal(vecInpSens, 1)):
             outy = 11
-        elif (hasFlash(vecInpSens, 2)):
+        elif (hasFlash(vecInpSens, 2) or hasGoal(vecInpSens, 2)):
             outy = 12
-        elif (vecInpSens[0][4] == 1):
+        elif (hasGoal(vecInpSens, 0)):
             outy = 3
             reached_goal = True
 
